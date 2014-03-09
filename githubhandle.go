@@ -29,8 +29,18 @@ func ExpectGithubToBreak(url string) (out string, e error) {
 		}
 		return "", fmt.Errorf("Cannot get GH page")
 	} else {
-		return ioutil.ReadAll(r.Body), e
+		b, _ := ioutil.ReadAll(r.Body)
+		return string(b), e
 	}
+}
+
+func FilterForGoRepo(Input []GHRepo, orig []GHRepo) []GHRepo {
+	for _, v := range Input {
+		if v.Language == "Go" {
+			orig = append(orig, v)
+		}
+	}
+	return orig
 }
 
 type GHRepo struct {
