@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	// "github.com/cheggaaa/pb"
+	"github.com/cheggaaa/pb"
+	"log"
 	"os"
+	"os/exec"
+	"strings"
 )
 
 var Repos []GHRepo
@@ -38,10 +41,9 @@ func main() {
 	if e != nil {
 		fmt.Println("Cannot decode the first set, Not going to attempt to get others.")
 	}
-	var StillData bool = true
 	var PageCount int = 2
 	var TripCount int = 0
-	for StillData {
+	for {
 		GHUrl = fmt.Sprintf("https://api.github.com/users/%s/starred?page=%d", *Username, PageCount)
 		s, e = ExpectGithubToBreak(GHUrl)
 		if e == nil && TripCount < 2 {
@@ -56,6 +58,7 @@ func main() {
 				fmt.Println("Cannot decode the first set, Not going to attempt to get others.")
 			}
 			PageCount++
+			fmt.Print(".")
 		} else {
 			TripCount++
 			if TripCount < 2 {
@@ -64,6 +67,26 @@ func main() {
 		}
 	}
 
+	bar := pb.StartNew(len(Repos))
+	for _, repo := range Repos {
+		GoGet(strings.Replace(repo.HtmlURL, "https://", "", -1))
+		bar.Increment()
+	}
 	// b, _ := json.Marshal(Repos)
 	// fmt.Println(string(b))
+}
+
+func GoGet(url string) {
+	buf := make([]byte, 1024)
+	cmd := exec.Command("go", "get", url)
+	stdout, _ := cmd.StdoutPipe()
+	if err := cmd.Start(); err != nil {
+		log.Fatal(err)
+	}
+	for {
+		_, e := stdout.Read(buf)
+		if e != nil {
+			break
+		}
+	}
 }
