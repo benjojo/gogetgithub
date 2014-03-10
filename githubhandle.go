@@ -16,7 +16,7 @@ func ExpectGithubToBreak(url string) (out string, e error) {
 
 	if r.StatusCode != 200 {
 		if r.StatusCode == 403 {
-			fmt.Println("Github Rate Limit reached.")
+			fmt.Println("Github Rate Limit reached. ")
 			rlreset := r.Header.Get("X-RateLimit-Reset")
 			if rlreset != "" {
 				i, e := strconv.ParseInt(rlreset, 10, 64)
