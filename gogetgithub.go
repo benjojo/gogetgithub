@@ -72,8 +72,6 @@ func main() {
 		GoGet(strings.Replace(repo.HtmlURL, "https://", "", -1))
 		bar.Increment()
 	}
-	// b, _ := json.Marshal(Repos)
-	// fmt.Println(string(b))
 }
 
 func GoGet(url string) {
