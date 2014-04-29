@@ -15,6 +15,7 @@ var Repos []GHRepo
 
 func main() {
 	Username := flag.String("username", "", "The username that you are targetting")
+	update := flag.Bool("update", false, "rather than get, update packages")
 	flag.Parse()
 
 	if os.Getenv("GOPATH") == "" {
@@ -69,14 +70,19 @@ func main() {
 
 	bar := pb.StartNew(len(Repos))
 	for _, repo := range Repos {
-		GoGet(strings.Replace(repo.HtmlURL, "https://", "", -1))
+		GoGet(strings.Replace(repo.HtmlURL, "https://", "", -1), update)
 		bar.Increment()
 	}
 }
 
-func GoGet(url string) {
+func GoGet(url string, update *bool) {
 	buf := make([]byte, 1024)
-	cmd := exec.Command("go", "get", url)
+	var cmd *exec.Cmd
+	if *update {
+		cmd = exec.Command("go", "get", "-u", url)
+	} else {
+		cmd = exec.Command("go", "get", url)
+	}
 	stdout, _ := cmd.StdoutPipe()
 	if err := cmd.Start(); err != nil {
 		log.Fatal(err)
