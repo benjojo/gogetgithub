@@ -16,8 +16,6 @@ var Repos []GHRepo
 func main() {
 	Username := flag.String("username", "", "The username that you are targetting")
 	update := flag.Bool("update", false, "rather than get, update packages")
-	ownrepos := flag.Bool("ownrepos", false, "get all of that users repo's too")
-
 	flag.Parse()
 
 	if os.Getenv("GOPATH") == "" {
@@ -69,10 +67,6 @@ func main() {
 				fmt.Println("API errors stopped the program from running.", e.Error())
 			}
 		}
-	}
-
-	if ownrepos {
-
 	}
 
 	bar := pb.StartNew(len(Repos))
