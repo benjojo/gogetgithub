@@ -56,10 +56,11 @@ func main() {
 				// We have found it all!
 				break
 			}
-			Repos = FilterForGoRepo(CastData, Repos)
 			if e != nil {
 				fmt.Println("Cannot decode the first set, Not going to attempt to get others.")
+				return
 			}
+			Repos = FilterForGoRepo(CastData, Repos)
 			PageCount++
 			fmt.Print(".")
 		} else {
